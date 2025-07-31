@@ -8,36 +8,11 @@ const secret="bigsecret"; // Define your secret key for JWT signing
 
 
 
-// router.get("/helloworld",async (req,res)=>{
-//    res.send("hello from todo page!")
-//   //res.redirect("/page")
-
-  const token=req.headers.authorization?.replace("Bearer ","");
-  const tokenToObject=jwt.verify(token,secret);
-
-  const user=tokenToObject.data;
-
-
-  if(!user){
-    return res.status(401).send("unauthorized user!");
-  }
-
-  console.log(user);
-
-  //static data 
-
-  /*var data=[
-        {title:'bring Milk',marked:true},
-        {title:'Homework finished',marked:false}
-    ]
-    res.send(data)*/
-
-    const todos=await prisma.todo.findMany({where:{username:user.username}})
-    console.log(todos)
-    res.send(todos)
-
-
-})
+// Uncomment and fix this route if needed, or remove it entirely if not used
+// router.get("/helloworld", async (req, res) => {
+//   res.send("hello from todo page!");
+//   // res.redirect("/page");
+// });
 
 
 
