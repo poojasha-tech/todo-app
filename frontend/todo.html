@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>todo-page</title>
+</head>
+
+
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .todo-container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        border-radius: 5px;;
+    }
+
+    h3 {
+        text-align: center;
+    }
+
+    input[type="text"] {
+        width: 100px;
+        padding: 10px;
+        margin-top: 5px;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .button {
+        width: 50px;
+        padding: 10px;
+        background-color: rgb(71, 71, 214);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;    
+       
+    }
+    #taskInput {
+        width: 50%;
+        padding: 10px;
+        margin-top: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgb(237, 216, 219);
+        border-color: #6299d5f1;
+        border-radius: 10px;
+    }
+
+    .initial {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 10px;
+
+    }
+
+    #taskList {
+        list-style-type: none;
+        padding: 0;
+        background-color: rgb(196, 109, 109);
+    }
+
+    .todo-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .todo-item button {
+        margin-left: 10px;
+    }   
+    .todo-item del {
+        color: gray;
+    }
+
+
+     .todo-item {
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 500;
+            font-style:italic;
+            box-sizing: border-box;
+            display: grid;
+            /* 70% 15% 15%*/
+            grid-template-columns: 52% 20% 20%;
+            margin-bottom: 20px;
+            gap:4%;
+            border-radius: 6px;
+            padding: 10px;
+            background-color: rgb(240, 124, 143);
+            box-shadow: 0 0 10px pink;
+            font-size: medium;
+
+
+        }
+
+        .todo-item[is-marked='true'] .todo-title {
+            text-decoration: line-through;
+            color: rgb(131, 117, 117);
+        }
+
+        .todo-title{
+            display: flex;
+            justify-content: center; 
+
+            font-size: 1.2rem;
+            color: rgb(0, 0, 0);
+            font-weight: 600;
+            font-style: italic;
+            text-align: center;
+            padding-left: 2px;
+        }
+
+        .todo-mark-btn {
+            background-color:rgb(63, 63, 185);
+            border: 1px solid rgb(63, 63, 185);
+            border-radius: 6px;
+            width: 100px;
+            padding: 6px;
+            margin-right: 200px;
+            text-size-adjust: auto;
+            font-size: medium;
+
+
+        }
+
+        .todo-mark-btn:hover {
+            background-color: rgb(63, 63, 185);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .todo-delete-btn {
+            background-color:rgb(63, 63, 185);
+            border: 1px solid  rgb(63, 63, 185);
+            border-radius: 6px;
+            padding: 6px;
+            width: 100px;
+            font-size: medium;
+            text-size-adjust: auto;
+
+
+        }
+
+        .todo-delete-btn:hover {
+            background-color:rgb(63, 63, 185);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+</style>
+
+
+
+
+<body>
+    <div>
+        <h3>Welcome To todo-Page</h3>
+        <div>
+            <h3>Here are your todos ACE IT</h3>
+            <div>
+                <div class="initial">
+                    <input type="text" id="taskInput" placeholder="Enter a task">
+                    <button class="button" onclick="addTask()"> Add </button>
+                </div>
+                <ul id="taskList"> </ul>
+
+                <div class="todo-container" id="todo-container"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        async function addTask() {
+            //alert("todo added!")
+            const taskInput = document.getElementById("taskInput");
+            if (taskInput.value.trim() === "") {
+                alert("Please enter a task.");
+                return;
+            }
+            await addItemToDb(taskInput.value);
+            taskInput.value = ""; // Clear the input field
+        }
+
+        async function addItemToDb(todoText) {
+            try {
+                const requestOptions = {
+                    method: "POST",
+                    redirect: "follow",
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("AUTH_API"),
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ title: todoText })
+                };
+                const response = await fetch("http://localhost:3000/to-do", requestOptions);
+
+                if (response.status != 201) {
+                    alert('cannot add todo');
+                }
+                else {
+                    alert('item added')
+                    window.location.reload();
+                }
+
+
+            }
+            catch (error) {
+                console.error("error while adding task:", error);
+                alert("Error while adding task. Please try again.");
+
+            }
+
+        }
+
+
+        //text on frontend
+        function addTodoItem(title, id, marked) {
+           
+            const htmlString = `
+            <div class="todo-item">
+                <div class="todo-title">${marked ? "<del>" + title + "</del>" : title}</div>
+                <button class="todo-delete-btn" data-id="${id}" onclick="markTodo(this)">${marked ? "unmark" : "mark"}</button>
+                <button class="todo-mark-btn" data-id="${id}" onclick="deleteTodo(this)">Delete</button>
+               
+            </div>
+            `
+
+            document.getElementById("todo-container").insertAdjacentHTML("beforeend", htmlString);
+        }
+
+
+        async function getTodosFromDb() {
+            const requestOptions = {
+                method: "GET",
+                redirect: "follow",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("AUTH_API"),
+                }
+            }
+
+            const response = await fetch("http://localhost:3000/to-do", requestOptions);
+            const data = await response.json();
+            for (let i = 0; i < data.length; i++) {
+                const todo = data[i];
+                addTodoItem(todo.title, todo.id, todo.marked);
+            }
+        }
+        getTodosFromDb();
+
+
+        async function deleteTodo(deleteButton) {
+           
+            const id = deleteButton.getAttribute("data-id");
+
+            const requestOptions = {
+                method: "DELETE",
+                redirect: "follow",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("AUTH_API")
+                }
+            };
+
+            try {
+
+                const response = await fetch("http://localhost:3000/to-do/" + id, requestOptions);
+
+                if (response.status == 204) {
+                    alert("todo deleted!")
+                    window.location.reload();
+                }
+
+                else {
+                    alert("cannot delete todo");
+                }
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+
+
+        async function markTodo(markButton) {
+            const id = markButton.getAttribute('data-id');
+            const requestOptions = {
+                method: "PUT",
+                redirect: "follow",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("AUTH_API"),
+                }
+            }
+
+
+            try {
+
+                const response = await fetch("http://localhost:3000/to-do/mark/" + id, requestOptions);
+
+                if (response.status == 201) {
+                    window.location.reload();
+                }
+                else {
+                    alert("cannot mark todo");
+                }
+
+
+
+
+            } catch (error) {
+
+                console.error("error while marking todo:", error);
+                alert("Error while marking todo. Please try again.");
+
+            }
+        }
+
+
+
+
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>
