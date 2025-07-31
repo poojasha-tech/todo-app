@@ -8,8 +8,8 @@ const secret="bigsecret"; // Define your secret key for JWT signing
 
 
 
-router.get("/to-do",async (req,res)=>{
-  //res.send("hello from todo page!")
+router.get("/helloworld",async (req,res)=>{
+   res.send("hello from todo page!")
   //res.redirect("/page")
 
   const token=req.headers.authorization?.replace("Bearer ","");
