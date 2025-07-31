@@ -7,7 +7,10 @@ const jwt = require("jsonwebtoken");
 
 
 
-
+router.get("/helloworld",async (req,res)=>{
+   res.send("hello from todo page!")
+  //res.redirect("/page")
+})
 
 router.post("/signup", async (req, res) => {
   try {
